@@ -88,8 +88,10 @@
             Date of Birth
         </label>
 
-        <input type="date" id="dob" class="form-control mb-3">
-
+<input type="text"
+       id="dob"
+       class="form-control mb-3"
+       placeholder="DD/MM/YYYY">
         <button class="btn btn-primary btn-calculate w-100"
                 onclick="calculateAge()">
             <i class="fas fa-calculator me-2"></i>
@@ -107,30 +109,52 @@
 
 <script>
 function calculateAge() {
+
     const dob = document.getElementById("dob").value;
 
     if (!dob) {
-        alert("Please select your Date of Birth");
+        alert("Please enter Date of Birth");
         return;
     }
 
-    const birthDate = new Date(dob);
-    const today = new Date();
+    const parts = dob.split('/');
 
-    let age = today.getFullYear() - birthDate.getFullYear();
-
-    const monthDifference =
-        today.getMonth() - birthDate.getMonth();
-
-    if (
-        monthDifference < 0 ||
-        (monthDifference === 0 &&
-         today.getDate() < birthDate.getDate())
-    ) {
-        age--;
+    if(parts.length !== 3){
+        alert("Use format DD/MM/YYYY");
+        return;
     }
 
-    document.getElementById("ageResult").innerHTML = age;
+    const day = parseInt(parts[0]);
+    const month = parseInt(parts[1]) - 1;
+    const year = parseInt(parts[2]);
+
+    const birthDate = new Date(year, month, day);
+    const today = new Date();
+
+    let years = today.getFullYear() - birthDate.getFullYear();
+    let months = today.getMonth() - birthDate.getMonth();
+    let days = today.getDate() - birthDate.getDate();
+
+    if (days < 0) {
+        months--;
+        days += new Date(
+            today.getFullYear(),
+            today.getMonth(),
+            0
+        ).getDate();
+    }
+
+    if (months < 0) {
+        years--;
+        months += 12;
+    }
+
+    document.getElementById("ageYears").innerHTML =
+        years + " Years";
+
+    document.getElementById("ageDetails").innerHTML =
+        months + " Months & " + days + " Days";
+
     document.getElementById("resultBox").style.display = "block";
 }
 </script>
